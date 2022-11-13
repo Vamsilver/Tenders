@@ -1,0 +1,132 @@
+﻿@page "/register"
+
+@using Tenders.Core.Entities
+@using Tenders.Core.Enums
+@inject IJSRuntime JsRuntime;
+@inject MongoDbConnection Connection;
+@inject NavigationManager Manager;
+
+<PageTitle>Register</PageTitle>
+
+<h1>Registration</h1>
+
+<EditForm Model="typeof(User)">
+    <select style="margin-right: 10px" id="selectRole" @bind="@_role">
+        <option value="@RoleType.Customer">Заказчик</option>
+        <option value="@RoleType.Projector">Проектировщик</option>
+        <option value="@RoleType.Builder">Застройщик</option>
+    </select>
+    @if (_role == RoleType.Customer)
+    {
+        <p>First name:<InputText @bind-Value="@_firstName" @onchange="@((ChangeEventArgs e) => _firstName = e.Value?.ToString())"> </InputText></p>
+        <br/>
+        <p>Last name:<InputText @bind-Value="@_lastName" @onchange="@((ChangeEventArgs e) => _lastName = e.Value?.ToString())"> </InputText></p>
+        <br/>
+        <p>Patronymic:<InputText @bind-Value="@_patronymic" @onchange="@((ChangeEventArgs e) => _patronymic = e.Value?.ToString())"></InputText></p>
+        <br/>
+    }
+    else
+    {
+        <p>Organization name:<InputText @bind-Value="@_nickName" @onchange="@((ChangeEventArgs e) => _nickName = e.Value?.ToString())"> </InputText></p>
+        <br/>   
+    }
+    <p>Login:<InputText @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"> </InputText></p>
+    <br/>
+    <p>Password:<InputText type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText></p>
+    <br/>
+    <p>Repeat password:<InputText type="password" @bind-Value="@_checkPassword" @onchange="@((ChangeEventArgs e) => _checkPassword = e.Value?.ToString())"></InputText></p>
+    <br/>
+    <p>Email:<InputText type="email" @bind-Value="@_email" @onchange="@((ChangeEventArgs e) => _email = e.Value?.ToString())"></InputText></p>
+    <br/>
+    <p>Phone number: <InputText type="tel" @bind-Value="@_phoneNumber" @onchange="@((ChangeEventArgs e) => _phoneNumber = e.Value?.ToString())"></InputText></p>
+
+    <br/>
+
+    @if (_role == RoleType.Customer)
+    {
+        <select id="selectIndustry" @bind="@_industry">
+            <option value="@IndustryType.WaterSupply">Водоснабжение</option>
+            <option value="@IndustryType.GasFixation">Газофиксация</option>
+        </select>
+    }
+    
+    <br/>
+    <button type="submit" @onclick="AddToDb">Sign Up</button>
+</EditForm>
+
+@code {
+    string? _nickName;
+    string? _firstName;
+    string? _lastName;
+    string? _patronymic;
+    string? _checkPassword = "";
+    string? _login;
+    string? _password;
+    string? _email;
+    RoleType _role = RoleType.Customer;
+    string? _phoneNumber;
+    IndustryType _industry = IndustryType.WaterSupply;
+
+    private async void AddToDb()
+    {
+        if (_role == RoleType.Customer)
+        {
+            if (String.IsNullOrEmpty(_firstName) || String.IsNullOrEmpty(_lastName) || String.IsNullOrEmpty(_patronymic))
+            {
+             
+                await JsRuntime.InvokeVoidAsync("alert", "Not all fields are written!");
+                return;   
+            }
+        }
+        else
+        {
+            if (String.IsNullOrEmpty(_nickName))
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Not all fields are written!");
+                return;
+            }
+        }
+        
+        if (String.IsNullOrEmpty(_email) || String.IsNullOrEmpty(_login) || String.IsNullOrEmpty(_password) ||
+            _checkPassword == "" || String.IsNullOrEmpty(_phoneNumber))
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Not all fields are written!");
+            return;
+        }
+
+        if (_checkPassword != _password)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Passwords are not the same!");
+            return;
+        }
+
+    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (Connection.FindByLogin(_login) is not null)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Such login already exists!");
+            return;
+        }
+
+        switch (_role)
+        {
+            case RoleType.Customer:
+    // var ind = _industry!.Equals("WaterSupply") ? IndustryType.WaterSupply : IndustryType.GasFixation;
+                Connection.AddToDatabase(new Customer(_login, _password, _email, _firstName, _lastName,
+                    _patronymic, _role, _phoneNumber!, _industry));
+                break;
+
+            case RoleType.Projector:
+                Connection.AddToDatabase(new Projector(_login, _password, _email, _role, _phoneNumber!, _nickName));
+                break;
+
+            case RoleType.Builder:
+                Connection.AddToDatabase(new Builder(_login, _password, _email, _role, _phoneNumber!, _nickName));
+                break;
+        }
+
+        StateHasChanged();
+
+        Manager.NavigateTo("/");
+    }
+
+}

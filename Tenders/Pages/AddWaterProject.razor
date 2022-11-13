@@ -1,0 +1,97 @@
+﻿@page "/waterproject"
+@using Tenders.Core.Projects
+@using Microsoft.AspNetCore.Components
+@using Tenders.Core.Enums
+@using Tenders.Core.Entities
+
+@inject MongoDbConnection Connection
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager Manager
+
+<PageTitle>Water supply project</PageTitle>
+
+<h1>Water supply project</h1>
+
+<EditForm Model="typeof(Project)">
+    <p>Name : <InputText size="50%" @bind-Value="@_name"></InputText></p>
+    <h2>Performers</h2>
+    <p>
+        Projector :
+        <select @bind="@_projector">
+            @foreach (var projector in _projectors!)
+            {
+                <option value="@projector.Login">@projector.NickName</option>
+            }
+        </select>
+    </p>
+    <p>
+        Builder :
+        <select @bind="_builder">
+            @foreach (var builder1 in _builders!)
+            {
+                <option value="@builder1.Login">@builder1.NickName</option>
+            }
+        </select>
+    </p>
+    <h2>Documents</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Document name</th>
+            <th>Description</th>
+            <th>Is required</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var doc in _project.Documents)
+        {
+            <tr>
+                <td width="60%">@doc.Name</td>
+                <td width="30%">
+                    <InputText size="70%" multiple="true" @bind-Value="@doc.Description"></InputText>
+                </td>
+                <td width="10%">
+                    <InputCheckbox @bind-Value="@doc.IsRequired"></InputCheckbox>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <button @onclick="AddProject">Add project</button>
+</EditForm>
+
+@code {
+    string? _name;
+    IndustryType? _industry = IndustryType.WaterSupply;
+    WaterSupplyProject _project = new WaterSupplyProject("");
+
+    List<Projector>? _projectors;
+    string? _projector = "";
+    List<Builder>? _builders;
+    string? _builder = "";
+
+    private async void AddProject()
+    {
+        if (String.IsNullOrEmpty(_name) || String.IsNullOrEmpty(_projector) || String.IsNullOrEmpty(_builder))
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Please name the project and choose the performers!");
+            return;
+        }
+
+        _project.Name = _name;
+        _project.OwnerId = Connection.User!.Id;
+        _project.ProjectorId = Connection.FindByLoginInProjectors(_projector!)!.Id;
+        _project.BuilderId = Connection.FindByLoginInBuilders(_builder!)!.Id;
+        Connection.AddToDatabaseWaterProject(_project);
+        await JsRuntime.InvokeVoidAsync("alert", "Project added!");
+        Manager.NavigateTo("/");
+    }
+
+    protected override void OnInitialized()
+    {
+        _projectors = Connection.FindProjectors();
+        _builders = Connection.FindBuilders();
+        base.OnInitialized();
+    }
+}

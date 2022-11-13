@@ -1,0 +1,267 @@
+﻿@page "/{login}"
+@using Tenders.Core.Entities
+@using Tenders.Core.Enums
+
+@inject MongoDbConnection Connection; 
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager Manager;
+
+@if (_user is not null)
+{
+    <PageTitle>@Login</PageTitle>
+
+    <button style="background-color: white; border-color: blue; float: right" @onclick="SignOut">Sign out</button>
+    <h1>Profile</h1>
+    
+    @if (!_isAdditionalInformationActive)
+    {
+        <EditForm Model="typeof(User)">
+            @if(@Connection.User?.RoleType != RoleType.Customer)
+            {
+                <p>Name of the organization: <InputText @bind-Value="@_nickName"> </InputText> Role: @_user.RoleType.ToString()</p>
+            }
+
+            @if (_user.RoleType == RoleType.Customer)
+            {
+                <p>
+                    Fullname:
+                    <InputText @bind-Value="@_lastName"> </InputText>
+                    <InputText @bind-Value="@_firstName"> </InputText>
+                    <InputText @bind-Value="@_patronymic"> </InputText>
+                </p>
+            }
+
+            <p>
+                Login: <InputText @bind-Value="@_login"> </InputText>
+                Password: <InputText @bind-Value="@_password"> </InputText>
+            </p>
+            <p>
+                Email: <InputText @bind-Value="@_email"> </InputText>
+                Phone number: <InputText @bind-Value="@_phoneNumber"> </InputText>
+            </p>
+
+            <button style="background-color: white; border-color: blue; margin-right: 10px"
+                    @onclick="@SaveChangesToBasicInfo">Save changes</button>
+            @if (Connection.User?.GetType() != typeof(Customer))
+            {
+                <button style="background-color: white; border-color: blue"
+                        @onclick="() => _isAdditionalInformationActive = true"> Edit Additional Information</button>
+            }
+        </EditForm>   
+    }
+    else
+    {
+        @if (Connection.User?.GetType() == typeof(Projector))
+        {
+            <EditForm Model="typeof(User)">
+                <p>PSRN (ОГРН): <InputText @bind-Value="@_psrn" > </InputText></p>
+                <p>TIN (ИНН): <InputText @bind-Value="@_tin"> </InputText></p>
+                <p>TRRC (КПП): <InputText @bind-Value="@_trrc"> </InputText></p>
+                <p>Address: <InputText @bind-Value="@_address"> </InputText></p>
+                <p>Director's fullname: <InputText @bind-Value="@_director"> </InputText></p>
+                <p>Main engineer: <InputText @bind-Value="@_mainEngineer"> </InputText></p>
+                
+
+                <button style="background-color: white; border-color: blue" 
+                        @onclick="SaveChangesToAdditionalInfoForProjector">Save changes</button>
+                <button style="background-color: white; border-color: blue" 
+                        @onclick="() => _isAdditionalInformationActive = false"> Edit basic Information</button>
+            </EditForm>      
+        }
+        @if (Connection.User?.RoleType == RoleType.Builder)
+        {
+            <EditForm Model="typeof(User)">
+                <p>PSRN (ОГРН): <InputText @bind-Value="@_psrn" > </InputText></p>
+                <p>TIN (ИНН): <InputText @bind-Value="@_tin"> </InputText></p>
+                <p>TRRC (КПП): <InputText @bind-Value="@_trrc"> </InputText></p>
+                <p>Address: <InputText @bind-Value="@_address"> </InputText></p>
+                <p>Director's fullname: <InputText @bind-Value="@_director"> </InputText></p>
+
+                <button style="background-color: white; border-color: blue" 
+                        @onclick="SaveChangesToAdditionalInfo">Save changes</button>
+                <button style="background-color: white; border-color: blue" 
+                        @onclick="() => _isAdditionalInformationActive = false"> Edit basic Information</button>
+            </EditForm>      
+        }
+    }
+}
+else
+{
+    <PageTitle>Error</PageTitle>
+    <h1>Unknown error</h1>
+}
+
+@code {
+    bool _isAdditionalInformationActive;
+    
+    [Parameter]
+    public string? Login { get; set; }
+    
+    User? _user;
+    
+    string? _firstName;
+    string? _nickName;
+    string? _lastName;
+    string? _patronymic;
+    string? _login;
+    string? _password;
+    string? _email;
+    string? _phoneNumber;
+
+    string? _psrn;
+    string? _tin;
+    string? _trrc;
+    string? _address;
+    string? _director;
+    string? _mainEngineer;
+    
+    protected override void OnInitialized()
+    {
+        _user = Connection.User;
+        if (_user is not null)
+        {
+            _login = _user.Login;
+            _password = _user.Password;
+            _email = _user.Email;
+            _phoneNumber = _user.PhoneNumber;
+            _nickName = _user.NickName;
+            
+            if (_user.RoleType == RoleType.Builder)
+            {
+                Builder builder = (Builder) _user;
+                _psrn = builder.PSRN;
+                _tin = builder.TIN;
+                _trrc = builder.TRRC;
+                _address = builder.Address;
+                _director = builder.Director;
+            }
+            else if (_user.RoleType == RoleType.Projector)
+            {
+                Projector projector = (Projector) _user;
+                _psrn = projector.PSRN;
+                _tin = projector.TIN;
+                _trrc = projector.TRRC;
+                _address = projector.Address;
+                _director = projector.Director;
+                _mainEngineer = projector.MainEngineer;
+            }
+            else
+            {
+                Customer customer = (Customer) _user;
+                _firstName = customer.FirstName;
+                _lastName = customer.LastName;
+                _patronymic = customer.Patronymic;
+            }
+            base.OnInitialized();
+        }
+    }
+    
+    private async void SaveChangesToBasicInfo()
+    {
+        bool isParametersChanged = true;
+
+        if (Connection.User?.RoleType != RoleType.Customer)
+        {
+            if(!_nickName!.Equals(Connection.User?.NickName))
+                Connection.ReplaceOneParameter(Connection.User!, "NickName", _nickName);
+        }
+        
+        if (!_login!.Equals(Connection.User?.Login))
+        {
+            if (Connection.FindByLogin(_login) is null)
+            {
+                Connection.ReplaceOneParameter(Connection.User!, "Login", _login);
+            }
+            else
+            {
+                isParametersChanged = false;
+                await JsRuntime.InvokeVoidAsync("alert", "This login already exists!");
+            }
+        }
+        
+        if(!_password!.Equals(Connection.User?.Password))
+            Connection.ReplaceOneParameter(_user, "Password", _password);
+        
+        if(!_email!.Equals(Connection.User?.Email))
+            Connection.ReplaceOneParameter(_user, "Email", _email);
+        
+        if(!_phoneNumber!.Equals(Connection.User?.PhoneNumber))
+            Connection.ReplaceOneParameter(_user, "PhoneNumber", _phoneNumber);
+        
+        if (_user!.RoleType == RoleType.Customer)
+        {
+            if(!_firstName!.Equals(((Customer)Connection.User!)?.FirstName))
+                Connection.ReplaceOneParameter(_user, "FirstName", _firstName);
+
+            if(!_lastName!.Equals(((Customer)Connection.User!)?.LastName))
+                Connection.ReplaceOneParameter(_user, "LastName", _lastName);
+        
+            if(!_patronymic!.Equals(((Customer)Connection.User!)?.Patronymic))
+                Connection.ReplaceOneParameter(_user, "Patronymic", _patronymic);
+        }
+        
+        StateHasChanged();
+
+        if (isParametersChanged)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Changes saved!");
+        }
+        else
+            await JsRuntime.InvokeVoidAsync("alert", "Nothing has been changed!");
+    }
+    
+    private async void SaveChangesToAdditionalInfo()
+    {
+        string parametr = null;
+
+        if (!(_psrn.Length == 13 && Int64.TryParse(_psrn, out var parsedNumber1)))
+        {
+            parametr = "PSRN";
+        }
+
+        if (!(_tin.Length == 10 && int.TryParse(_tin, out var parsedNumber2)))
+        {
+            if (parametr is not null)
+                parametr += " & TIN";
+            else
+                parametr = "TIN";
+        }
+
+        if (!(_trrc.Length == 9 && int.TryParse(_trrc, out var parsedNumber3)))
+        {
+            if (parametr is not null)
+                parametr += " & TRRC";
+            else
+                parametr = "TRRC";
+        }
+
+        if (parametr is null)
+        {
+            Connection.ReplaceOneParameter(Connection.User!, "TRRC", _trrc!);   
+            Connection.ReplaceOneParameter(Connection.User!, "TIN", _tin!);   
+            Connection.ReplaceOneParameter(Connection.User!, "PSRN", _psrn!);   
+            Connection.ReplaceOneParameter(Connection.User!, "Address", _address!);
+            Connection.ReplaceOneParameter(Connection.User!, "Director", _director!);
+            StateHasChanged();
+            OnInitialized();
+            base.OnInitialized();
+            await JsRuntime.InvokeVoidAsync("alert", "Changes saved!");
+        }
+        else
+            await JsRuntime.InvokeVoidAsync("alert", $"{parametr} specified incorrectly!");
+    }
+
+    private void SaveChangesToAdditionalInfoForProjector()
+    {
+        SaveChangesToAdditionalInfo();
+        Connection.ReplaceOneParameter(Connection.User!, "MainEngineer", _mainEngineer!);
+        OnInitialized();
+        base.OnInitialized();
+    }
+
+    private void SignOut()
+    {
+        Connection.User = null;
+        Manager.NavigateTo("/");
+    }
+}

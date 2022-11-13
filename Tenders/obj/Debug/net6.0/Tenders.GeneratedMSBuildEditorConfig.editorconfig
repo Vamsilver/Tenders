@@ -1,0 +1,84 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Tenders
+build_property.RootNamespace = Tenders
+build_property.ProjectDir = C:\Users\vamsi\RiderProjects\Tenders\Tenders\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\vamsi\RiderProjects\Tenders\Tenders
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/AddGasProject.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkR2FzUHJvamVjdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/AddWaterProject.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRkV2F0ZXJQcm9qZWN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Authorization.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aG9yaXphdGlvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/PersonalArea.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVyc29uYWxBcmVhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Project.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvamVjdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVnaXN0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Shared/SurveyPromptProjects.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdFByb2plY3RzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-dimuzifl4y
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-zrf9aowbty
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/vamsi/RiderProjects/Tenders/Tenders/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

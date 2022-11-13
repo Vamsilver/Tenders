@@ -1,0 +1,563 @@
+﻿@page "/project"
+@using Microsoft.VisualBasic.FileIO
+@using Tenders.Core.Enums
+@using Tenders.Core.Projects
+@using System.Reflection.Metadata
+@using Document = Tenders.Core.Entities.Document
+
+@inject MongoDbConnection Connection
+@inject FileSystemService FileSystemService
+@inject NavigationManager Manager
+
+@if (_projectGasFixation is not null)
+{
+    <PageTitle>@_projectGasFixation.Name</PageTitle>
+    <h1>@_projectGasFixation.Name</h1>
+    @if (Connection.User!.RoleType == RoleType.Projector)
+    {
+        <h2>Parametrs</h2>
+        <EditForm Model="typeof(Core.Projects.Project)">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Parametr name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Name: </td>
+                    <td>
+                        @_projectGasFixation.Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Pipeline diameter (mm)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectGasFixation.PipelineDiameter"></InputNumber>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object length (m)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectGasFixation.ObjectLength"></InputNumber>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Estimated cost (thousand roubles)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectGasFixation.EstimatedCost"></InputNumber>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Term for the development of project documentation (months)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectGasFixation.DevelopmentTime"></InputNumber>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </EditForm>
+        <br/>
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Upload/load</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectGasFixation.Documents)
+            {
+                @if (doc.IsRequired && doc.OwnerRole == Connection.User?.RoleType)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <InputFile OnChange="@((InputFileChangeEventArgs e) => @InputFiles(e, doc, _projectGasFixation.Documents))"></InputFile>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    @if (Connection.User!.RoleType == RoleType.Customer)
+    {
+        <h2>Parametrs</h2>
+        <EditForm Model="typeof(Core.Projects.Project)">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Parametr name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Name: </td>
+                    <td>
+                        @_projectGasFixation.Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Pipeline diameter (mm)</td>
+                    <td>
+                        @_projectGasFixation.PipelineDiameter
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object length (m)</td>
+                    <td>
+                        @_projectGasFixation.ObjectLength
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Estimated cost (thousand roubles)</td>
+                    <td>
+                        @_projectGasFixation.EstimatedCost
+                    </td>
+                </tr>
+                <tr>
+                    <td>Term for the development of project documentation (months)</td>
+                    <td>
+                        @_projectGasFixation.DevelopmentTime
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </EditForm>
+        <br/>
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Is accepted</th>
+                <th>Upload/load</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectGasFixation.Documents)
+            {
+                @if (doc.IsRequired)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            <EditForm Model="typeof(bool)">
+                                <InputCheckbox @bind-Value="@doc.IsAccepted"></InputCheckbox>
+                            </EditForm>
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <p>File is missing</p>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    @if (Connection.User!.RoleType == RoleType.Builder)
+    {
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Upload</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectGasFixation.Documents)
+            {
+                @if (doc.IsRequired && doc.OwnerRole == Connection.User?.RoleType)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <br/>
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <InputFile OnChange="@((InputFileChangeEventArgs e) => @InputFiles(e, doc, _projectGasFixation.Documents))"></InputFile>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    <button @onclick="SaveChanges">Save Changes</button>
+}
+else
+{
+    <PageTitle>@_projectWaterSupply!.Name</PageTitle>
+    <h1>@_projectWaterSupply!.Name</h1>
+@if (Connection.User!.RoleType == RoleType.Projector)
+    {
+        <h2>Parametrs</h2>
+        <EditForm Model="typeof(Core.Projects.Project)">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Parametr name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Name: </td>
+                    <td>
+                        @_projectWaterSupply.Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Pipeline diameter (mm)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectWaterSupply.PipelineDiameter"></InputNumber>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object length (m)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectWaterSupply.ObjectLength"></InputNumber>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Estimated cost (thousand roubles)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectWaterSupply.EstimatedCost"></InputNumber>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Term for the development of project documentation (months)</td>
+                    <td>
+                        <InputNumber size="50%" @bind-Value="@_projectWaterSupply.DevelopmentTime"></InputNumber>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </EditForm>
+        <br/>
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Upload/load</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectWaterSupply.Documents)
+            {
+                @if (doc.IsRequired && doc.OwnerRole == Connection.User?.RoleType)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <InputFile OnChange="@((InputFileChangeEventArgs e) => @InputFiles(e, doc, _projectWaterSupply.Documents))"></InputFile>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    @if (Connection.User!.RoleType == RoleType.Customer)
+    {
+        <h2>Parametrs</h2>
+        <EditForm Model="typeof(Core.Projects.Project)">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Parametr name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Name: </td>
+                    <td>
+                        @_projectWaterSupply.Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Pipeline diameter (mm)</td>
+                    <td>
+                        @_projectWaterSupply.PipelineDiameter
+                    </td>
+                </tr>
+                <tr>
+                    <td>Object length (m)</td>
+                    <td>
+                        @_projectWaterSupply.ObjectLength
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Estimated cost (thousand roubles)</td>
+                    <td>
+                        @_projectWaterSupply.EstimatedCost
+                    </td>
+                </tr>
+                <tr>
+                    <td>Term for the development of project documentation (months)</td>
+                    <td>
+                        @_projectWaterSupply.DevelopmentTime
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </EditForm>
+        <br/>
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Is accepted</th>
+                <th>Upload/load</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectWaterSupply.Documents)
+            {
+                @if (doc.IsRequired)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            <EditForm Model="typeof(bool)">
+                                <InputCheckbox @bind-Value="@doc.IsAccepted"></InputCheckbox>
+                            </EditForm>
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <p>File is missing</p>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    @if (Connection.User!.RoleType == RoleType.Builder)
+    {
+        <h2>Documents</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Description</th>
+                <th>Upload</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (Document doc in _projectWaterSupply.Documents)
+            {
+                @if (doc.IsRequired && doc.OwnerRole == Connection.User?.RoleType)
+                {
+                    <tr>
+                        <td width="60%">@doc.Name</td>
+                        <td width="30%">
+                            @doc.Description
+                        </td>
+                        <td>
+                            @if (doc.FileName is not null)
+                            {
+                                @doc.FileName
+                                <br/>
+                                <button @onclick="@(() => DownloadFile(doc))">Load</button>
+                                <button @onclick="@(() => DeleteFile(doc))">Delete</button>
+                            }
+                            else
+                            {
+                                <InputFile OnChange="@((InputFileChangeEventArgs e) => @InputFiles(e, doc, _projectWaterSupply.Documents))"></InputFile>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+    <button @onclick="SaveChanges">Save Changes</button>
+}
+
+@code {
+    // [Parameter]
+    // public string? Id { get; set; } = "1";
+
+    WaterSupplyProject? _projectWaterSupply;
+    GasFixationProject? _projectGasFixation;
+
+    protected override void OnInitialized()
+    {
+        if (Connection.Project?.IndustryType == IndustryType.WaterSupply)
+            _projectWaterSupply = (WaterSupplyProject) Connection.Project;
+        else
+            _projectGasFixation = (GasFixationProject) Connection.Project;
+    // Id = _project.Id.ToString() ?? "1";
+        base.OnInitialized();
+    }
+
+    private async Task InputFiles(InputFileChangeEventArgs e, Core.Entities.Document doc,
+        List<Core.Entities.Document> documents)
+    {
+        foreach (var file in e.GetMultipleFiles(e.FileCount))
+        {
+            Stream stream = file.OpenReadStream(2000000);
+            await FileSystemService.UploadFileToDb(stream, file.Name);
+            await stream.DisposeAsync();
+            doc.OwnerId = Connection.User?.Id;
+            doc.FileName = FileSystemService.FindFile(file.Name).Filename;
+            if (_projectWaterSupply is not null)
+            {
+                Connection.ReplaceDocumentsInWaterProject(_projectWaterSupply);
+            }
+            if (_projectWaterSupply is not null)
+            {
+                Connection.ReplaceDocumentsInGasProject(_projectGasFixation);
+            }
+            OnInitialized();
+        }
+    }
+
+    private void SaveChanges()
+    {
+        if (_projectWaterSupply is not null)
+        {
+            bool fl = true;
+            
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "PipelineDiameter", _projectWaterSupply.PipelineDiameter);
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "ObjectLength", _projectWaterSupply.ObjectLength);
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "PerformanceBiofeedback", _projectWaterSupply.PerformanceBiofeedback);
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "NumberAndCapacityOfSewagePumpingStations", _projectWaterSupply.NumberAndCapacityOfSewagePumpingStations);
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "EstimatedCost", _projectWaterSupply.EstimatedCost);
+            Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "DevelopmentTime", _projectWaterSupply.DevelopmentTime);
+            Connection.ReplaceDocumentsInWaterProject(_projectWaterSupply);
+            
+            foreach (var doc in _projectWaterSupply.Documents)
+            {
+                if (doc.IsRequired)
+                    if (!doc.IsAccepted)
+                    {
+                        fl = false;
+                        break;
+                    }
+            }
+            if (fl)
+            {
+                _projectWaterSupply.isCompleted = true;
+                Connection.ReplaceOneParameterInWaterProject(_projectWaterSupply, "isCompleted", true);
+            }
+        }
+        else if (_projectGasFixation is not null)
+        {
+            bool fl = true;
+            
+            Connection.ReplaceOneParameterInGasProject(_projectGasFixation, "PipelineDiameter", _projectGasFixation.PipelineDiameter);
+            Connection.ReplaceOneParameterInGasProject(_projectGasFixation, "ObjectLength", _projectGasFixation.ObjectLength);
+            Connection.ReplaceOneParameterInGasProject(_projectGasFixation, "EstimatedCost", _projectGasFixation.EstimatedCost);
+            Connection.ReplaceOneParameterInGasProject(_projectGasFixation, "DevelopmentTime", _projectGasFixation.DevelopmentTime);
+            Connection.ReplaceDocumentsInGasProject(_projectGasFixation);
+            
+            foreach (var doc in _projectGasFixation.Documents)
+            {
+                if (doc.IsRequired)
+                    if (!doc.IsAccepted)
+                    {
+                        fl = false;
+                        break;
+                    }
+            }
+            if (fl)
+            {
+                _projectGasFixation.isCompleted = true;
+                Connection.ReplaceOneParameterInGasProject(_projectGasFixation, "isCompleted", true);
+            }
+        }
+        Manager.NavigateTo("/");
+    }
+
+    private void DownloadFile(Document document)
+    {
+        FileSystemService.DownloadToLocal(document.FileName);
+    }
+
+    private void DeleteFile(Document document)
+    {
+        FileSystemService.DeleteFile(document.FileName!);
+        document.FileName = null;
+    }
+}

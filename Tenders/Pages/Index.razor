@@ -1,0 +1,163 @@
+﻿@page "/"
+@using Tenders.Core.Entities
+@using Tenders.Core.Enums
+@using Tenders.Core.Projects
+@using Microsoft.AspNetCore.Components
+@using MongoDB.Bson
+@inject MongoDbConnection Connection
+@inject NavigationManager Manager
+
+<PageTitle>Projects</PageTitle>
+
+@if (Connection.User is null)
+{
+    <SurveyPrompt Title="To use the functionality, please log in to your account."/>
+}
+else if (Connection.User?.RoleType == RoleType.Customer)
+{
+    <h1>Your projects</h1>
+    <button @onclick="AddProject">Add new Project</button>
+    @if ((_waterProjectsForCustomer is not null && _waterProjectsForCustomer?.Count != 0)
+         || (_gasProjectsForCustomer is not null && _gasProjectsForCustomer.Count != 0))
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Project name</th>
+                <th>Industry</th>
+                <th>Publication date</th>
+                <th>Is completed</th>
+                <th>Open link</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var project in _waterProjectsForCustomer)
+            {
+                <tr>
+                    <td width="60%">@project.Name</td>
+                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
+                    <td width="10%">@project.isCompleted</td>
+                    <td>
+                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    </td>
+                    <td>
+                        <button @onclick="@(_ => DeleteProject(@project.Id, IndustryType.WaterSupply))">Delete</button>
+                    </td>
+
+                </tr>
+            }
+            @foreach (var project in _gasProjectsForCustomer)
+            {
+                <tr>
+                    <td width="60%">@project.Name</td>
+                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
+                    <td width="10%">@project.isCompleted</td>
+                    <td>
+                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+
+                    </td>
+                    <td>
+                        <button @onclick="@(_ => DeleteProject(@project.Id, IndustryType.GasFixation))">Delete</button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <SurveyPromptProjects Title="You don't have any projects yet!"></SurveyPromptProjects>
+    }
+}
+else 
+{
+    <h1>Your projects</h1>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Project name</th>
+            <th>Industry</th>
+            <th>Publication date</th>
+            <th>Is completed</th>
+            <th>Open link</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var project in _allWaterProjects!)
+        {
+            if (project.BuilderId == Connection.User.Id || project.ProjectorId == Connection.User.Id)
+            {
+                <tr>
+                    <td width="60%">@project.Name</td>
+                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
+                    <td width="10%">@project.isCompleted</td>
+                    <td>
+                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    </td>
+                </tr>   
+            }
+        }
+        @foreach (var project in _allGasProjects!)
+        {
+            if (project.BuilderId == Connection.User.Id || project.ProjectorId == Connection.User.Id)
+            {
+                <tr>
+                    <td width="60%">@project.Name</td>
+                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
+                    <td width="10%">@project.isCompleted</td>
+                    <td>
+                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    IndustryType _industry;
+    List<WaterSupplyProject>? _waterProjectsForCustomer;
+    List<GasFixationProject>? _gasProjectsForCustomer;
+    List<WaterSupplyProject>? _allWaterProjects;
+    List<GasFixationProject>? _allGasProjects;
+
+    protected override void OnInitialized()
+    {
+        if (Connection.User is not null)
+        {
+            if (Connection.User.RoleType == RoleType.Customer)
+                _industry = ((Customer) Connection.User).IndustryType;
+            _waterProjectsForCustomer = Connection.FindWaterProjects(Connection.User.Id);
+            _gasProjectsForCustomer = Connection.FindGasProjects(Connection.User.Id);
+            _allGasProjects = Connection.FindAllGasProjects();
+            _allWaterProjects = Connection.FindAllWaterProjects();
+        }
+        base.OnInitialized();
+    }
+
+    private void AddProject()
+    {
+        Manager.NavigateTo(_industry == IndustryType.WaterSupply ? "/waterproject" : "/gasproject");
+    }
+
+    private void OpenProject(ObjectId id)
+    {
+        Connection.Project = Connection.FindProject(id);
+        Manager.NavigateTo("/project");
+    }
+
+    private void DeleteProject(ObjectId projectId, IndustryType industryType)
+    {
+        Connection.DeleteFromDatabaseProject(projectId, industryType);
+        OnInitialized();
+        base.OnInitialized();
+    }
+}

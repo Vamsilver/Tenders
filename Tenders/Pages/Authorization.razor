@@ -1,0 +1,56 @@
+﻿@page "/authorization"
+
+@using Tenders.Core.Entities
+@using Tenders.Core.Interfaces
+@inject IJSRuntime JsRuntime;
+@inject MongoDbConnection Connection;
+@inject NavigationManager Manager;
+@inject ILocalStorageService StorageService;
+
+<PageTitle>Authorization</PageTitle>
+
+<h1>Authorization</h1>
+
+<EditForm Model="typeof(User)" OnValidSubmit="TryToFindUser">
+    <p>Login:</p> <InputText @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"></InputText>
+    <p>Password:</p> <InputText type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText>
+    <br /><br />
+    <button type="submit">Sign in</button>
+</EditForm>
+
+@code {
+    string? _login;
+    string? _password;
+
+    private async Task TryToFindUser()
+    {
+        User? foundedUser;
+
+        if (String.IsNullOrEmpty(_login) || String.IsNullOrEmpty(_password))
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Not all fields are written!");
+            return;
+        }
+
+        foundedUser = Connection.FindByLogin(_login);
+
+        if(foundedUser is null)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "No such user in DB!");
+            return;
+        }
+        
+        if(foundedUser.Password == _password)
+        {
+            Connection.User = foundedUser;
+            Manager.NavigateTo("/");
+            await StorageService.SetAsync<User>("Authorization", foundedUser);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Incorrect password!");
+        }
+
+        StateHasChanged();
+    }
+}

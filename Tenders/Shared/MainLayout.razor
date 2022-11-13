@@ -1,0 +1,67 @@
+﻿@using Tenders.Core.Interfaces
+@using Tenders.Core.Enums
+@using Tenders.Core.Entities
+@inherits LayoutComponentBase
+@inject NavigationManager Manager;
+@inject MongoDbConnection Connection
+@inject ILocalStorageService StorageService
+
+<PageTitle>Tenders</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <div style="margin: 10px">
+                @if (Connection.User is null)
+                {
+                    <button @onclick="@NavigateToAuthorization">Authorization</button>
+                    <button @onclick="@NavigateToRegistration">Register</button>
+                }
+                else if (Connection.User!.RoleType == RoleType.Customer)
+                {
+                    <a target="_blank" class="font-weight-bold link-blue" @onclick="NavigateToProfile">
+                        @(((Customer) Connection.User).LastName) @(((Customer) Connection.User).FirstName)
+                    </a>
+                }
+                else if (Connection.User.RoleType == RoleType.Builder)
+                {
+                    <a target="_blank" class="font-weight-bold link-blue" @onclick="NavigateToProfile">
+                        @(((Builder)Connection.User).NickName)
+                    </a>
+                }
+                else if (Connection.User.RoleType == RoleType.Projector)
+                {
+                    <a target="_blank" class="font-weight-bold link-blue" @onclick="NavigateToProfile">
+                        @(((Projector)Connection.User).NickName)
+                    </a>
+                }
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code
+{
+    public void NavigateToRegistration()
+    {
+        Manager.NavigateTo("/register");
+    }
+
+    public void NavigateToAuthorization()
+    {
+        Manager.NavigateTo("/authorization");
+    }
+
+    public void NavigateToProfile()
+    {
+        Manager.NavigateTo($"/{Connection.User?.Login}");
+    }
+}
