@@ -13,9 +13,9 @@
 <h1>Water supply project</h1>
 
 <EditForm Model="typeof(Project)">
-    <p>Name : <InputText size="50%" @bind-Value="@_name"></InputText></p>
+    <p>Name : <InputText class="text-field__input" size="70%" @bind-Value="@_name"></InputText></p>
     <h2>Performers</h2>
-    <p>
+    <label class="label-for-select">
         Projector :
         <select @bind="@_projector">
             @foreach (var projector in _projectors!)
@@ -23,8 +23,10 @@
                 <option value="@projector.Login">@projector.NickName</option>
             }
         </select>
-    </p>
-    <p>
+    </label>
+        <br/>
+        <br/>
+    <lable class="label-for-select">
         Builder :
         <select @bind="_builder">
             @foreach (var builder1 in _builders!)
@@ -32,7 +34,7 @@
                 <option value="@builder1.Login">@builder1.NickName</option>
             }
         </select>
-    </p>
+    </lable>
     <h2>Documents</h2>
     <table class="table">
         <thead>
@@ -48,7 +50,7 @@
             <tr>
                 <td width="60%">@doc.Name</td>
                 <td width="30%">
-                    <InputText size="70%" multiple="true" @bind-Value="@doc.Description"></InputText>
+                    <InputText size="70%"  class="text-field__input" multiple="true" @bind-Value="@doc.Description"></InputText>
                 </td>
                 <td width="10%">
                     <InputCheckbox @bind-Value="@doc.IsRequired"></InputCheckbox>
@@ -58,7 +60,7 @@
         </tbody>
     </table>
 
-    <button @onclick="AddProject">Add project</button>
+    <button class="button"@onclick="AddProject">Add project</button>
 </EditForm>
 
 @code {

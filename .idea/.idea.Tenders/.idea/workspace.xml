@@ -5,7 +5,29 @@
     <projectFile profileName="IIS Express">Tenders/Tenders.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b131a17d-5ab0-4cd9-bb5f-af511493ec60" name="Changes" comment="" />
+    <list default="true" id="b131a17d-5ab0-4cd9-bb5f-af511493ec60" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Tenders/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tenders/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Data/MongoDbConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Data/MongoDbConnection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/AddGasProject.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/AddGasProject.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/AddWaterProject.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/AddWaterProject.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/Authorization.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/Authorization.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/Counter.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/Index.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/Index.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/PersonalArea.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/PersonalArea.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/Project.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/Project.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Pages/Register.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Pages/Register.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Shared/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Shared/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/Shared/NavMenu.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/bin/Debug/net6.0/Tenders.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/bin/Debug/net6.0/Tenders.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/bin/Debug/net6.0/Tenders.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/bin/Debug/net6.0/Tenders.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/Tenders.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/ref/Tenders.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/ref/Tenders.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/refint/Tenders.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/Debug/net6.0/refint/Tenders.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/obj/staticwebassets.pack.sentinel" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/obj/staticwebassets.pack.sentinel" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tenders/wwwroot/css/site.css" beforeDir="false" afterPath="$PROJECT_DIR$/Tenders/wwwroot/css/site.css" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +39,9 @@
         <option value="JavaScript File" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/227ed75384c24c09bd6a4ae4ff4c1534a23898/1b/88320e94/Dictionary`2.cs" root0="SKIP_HIGHLIGHTING" />
@@ -40,11 +65,13 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f4d8ce1f51ef96cbef922cae194a3df35ac807d278549e357bb51bf925e87/InputText.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tenders/Core/Enums/IndustryType.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Tenders/Core/Enums/RoleType.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Tenders/obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2HLmobdxby2f9SEigx6bofI0GXA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -100,37 +127,47 @@
       <workItem from="1668072920060" duration="4139000" />
       <workItem from="1668077671378" duration="19538000" />
       <workItem from="1668256550861" duration="19153000" />
-      <workItem from="1668340365001" duration="34171000" />
+      <workItem from="1668340365001" duration="34838000" />
+      <workItem from="1668415824361" duration="3535000" />
+      <workItem from="1668614286673" duration="8200000" />
     </task>
+    <task id="LOCAL-00001" summary="add full functionality for TK">
+      <created>1668376943160</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668376943160</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="add full functionality for TK" />
+    <option name="LAST_COMMIT_MESSAGE" value="add full functionality for TK" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Tenders/Pages/Register.razor</url>
-          <line>70</line>
-          <properties documentPath="C:\Users\vamsi\RiderProjects\Tenders\Tenders\Pages\Register.razor" initialLine="71" isMultiMethodBreakpoint="true">
-            <option name="multiMethodBreakpoint" value="true" />
-            <startOffsets>
-              <option value="-1" />
-            </startOffsets>
-            <endOffsets>
-              <option value="-1" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Tenders/Pages/PersonalArea.razor</url>
-          <line>190</line>
+          <line>220</line>
           <properties documentPath="C:\Users\vamsi\RiderProjects\Tenders\Tenders\Pages\PersonalArea.razor" initialLine="190" isMultiMethodBreakpoint="true">
             <option name="multiMethodBreakpoint" value="true" />
             <startOffsets>
@@ -141,20 +178,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Tenders/Pages/AddWaterProject.razor</url>
-          <line>53</line>
-          <properties documentPath="C:\Users\vamsi\RiderProjects\Tenders\Tenders\Pages\AddWaterProject.razor" initialLine="53" isMultiMethodBreakpoint="true">
-            <option name="multiMethodBreakpoint" value="true" />
-            <startOffsets>
-              <option value="-1" />
-            </startOffsets>
-            <endOffsets>
-              <option value="-1" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

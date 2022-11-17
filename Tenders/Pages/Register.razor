@@ -8,51 +8,59 @@
 
 <PageTitle>Register</PageTitle>
 
-<h1>Registration</h1>
 
-<EditForm Model="typeof(User)">
-    <select style="margin-right: 10px" id="selectRole" @bind="@_role">
-        <option value="@RoleType.Customer">Заказчик</option>
-        <option value="@RoleType.Projector">Проектировщик</option>
-        <option value="@RoleType.Builder">Застройщик</option>
-    </select>
-    @if (_role == RoleType.Customer)
-    {
-        <p>First name:<InputText @bind-Value="@_firstName" @onchange="@((ChangeEventArgs e) => _firstName = e.Value?.ToString())"> </InputText></p>
+<div class="center-screen">
+    <h1>Registration</h1>
+    <br/>
+    <EditForm Model="typeof(User)">
+        <label class="label-for-select">
+            <select id="selectRole" @bind="@_role">
+                <option value="@RoleType.Customer">Заказчик</option>
+                <option value="@RoleType.Projector">Проектировщик</option>
+                <option value="@RoleType.Builder">Застройщик</option>
+            </select>
+        </label>
+        <label>    </label>
+        @if (_role == RoleType.Customer)
+        {
+            <label class="label-for-select">
+                <select id="selectIndustry" @bind="@_industry">
+                    <option value="@IndustryType.WaterSupply">Водоснабжение</option>
+                    <option value="@IndustryType.GasFixation">Газофиксация</option>
+                </select>
+            </label>
+        }
+        @if (_role == RoleType.Customer)
+        {
+            <br/>
+            <label>
+                First name: <InputText class="text-field__input" @bind-Value="@_firstName" @onchange="@((ChangeEventArgs e) => _firstName = e.Value?.ToString())"> </InputText>
+                Last name: <InputText class="text-field__input" @bind-Value="@_lastName" @onchange="@((ChangeEventArgs e) => _lastName = e.Value?.ToString())"> </InputText>
+                Patronymic: <InputText class="text-field__input" @bind-Value="@_patronymic" @onchange="@((ChangeEventArgs e) => _patronymic = e.Value?.ToString())"></InputText>
+            </label>
+            <br/>
+        }
+        else
+        {
+            <br/>
+            <label>Organization name:<InputText class="text-field__input" @bind-Value="@_nickName" @onchange="@((ChangeEventArgs e) => _nickName = e.Value?.ToString())"> </InputText></label>
+            <br/>
+        }
+        <label>Login:<InputText class="text-field__input" @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"> </InputText></label>
         <br/>
-        <p>Last name:<InputText @bind-Value="@_lastName" @onchange="@((ChangeEventArgs e) => _lastName = e.Value?.ToString())"> </InputText></p>
+        <label>Password:<InputText class="text-field__input" type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText></label>
         <br/>
-        <p>Patronymic:<InputText @bind-Value="@_patronymic" @onchange="@((ChangeEventArgs e) => _patronymic = e.Value?.ToString())"></InputText></p>
+        <label>Repeat password:<InputText class="text-field__input" type="password" @bind-Value="@_checkPassword" @onchange="@((ChangeEventArgs e) => _checkPassword = e.Value?.ToString())"></InputText></label>
         <br/>
-    }
-    else
-    {
-        <p>Organization name:<InputText @bind-Value="@_nickName" @onchange="@((ChangeEventArgs e) => _nickName = e.Value?.ToString())"> </InputText></p>
-        <br/>   
-    }
-    <p>Login:<InputText @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"> </InputText></p>
-    <br/>
-    <p>Password:<InputText type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText></p>
-    <br/>
-    <p>Repeat password:<InputText type="password" @bind-Value="@_checkPassword" @onchange="@((ChangeEventArgs e) => _checkPassword = e.Value?.ToString())"></InputText></p>
-    <br/>
-    <p>Email:<InputText type="email" @bind-Value="@_email" @onchange="@((ChangeEventArgs e) => _email = e.Value?.ToString())"></InputText></p>
-    <br/>
-    <p>Phone number: <InputText type="tel" @bind-Value="@_phoneNumber" @onchange="@((ChangeEventArgs e) => _phoneNumber = e.Value?.ToString())"></InputText></p>
+        <label>Email:<InputText class="text-field__input" type="email" @bind-Value="@_email" @onchange="@((ChangeEventArgs e) => _email = e.Value?.ToString())"></InputText></label>
+        <br/>
+        <label>Phone number: <InputText class="text-field__input" type="tel" @bind-Value="@_phoneNumber" @onchange="@((ChangeEventArgs e) => _phoneNumber = e.Value?.ToString())"></InputText></label>
 
-    <br/>
+        <br/> <br/>
 
-    @if (_role == RoleType.Customer)
-    {
-        <select id="selectIndustry" @bind="@_industry">
-            <option value="@IndustryType.WaterSupply">Водоснабжение</option>
-            <option value="@IndustryType.GasFixation">Газофиксация</option>
-        </select>
-    }
-    
-    <br/>
-    <button type="submit" @onclick="AddToDb">Sign Up</button>
-</EditForm>
+        <button class="button" type="submit" @onclick="AddToDb">Sign Up</button>
+    </EditForm>
+</div>
 
 @code {
     string? _nickName;
@@ -73,9 +81,8 @@
         {
             if (String.IsNullOrEmpty(_firstName) || String.IsNullOrEmpty(_lastName) || String.IsNullOrEmpty(_patronymic))
             {
-             
                 await JsRuntime.InvokeVoidAsync("alert", "Not all fields are written!");
-                return;   
+                return;
             }
         }
         else
@@ -86,7 +93,7 @@
                 return;
             }
         }
-        
+
         if (String.IsNullOrEmpty(_email) || String.IsNullOrEmpty(_login) || String.IsNullOrEmpty(_password) ||
             _checkPassword == "" || String.IsNullOrEmpty(_phoneNumber))
         {
@@ -104,6 +111,12 @@
         if (Connection.FindByLogin(_login) is not null)
         {
             await JsRuntime.InvokeVoidAsync("alert", "Such login already exists!");
+            return;
+        }
+
+        if (!IsValidEmail(_email))
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Incorrect email!");
             return;
         }
 
@@ -128,5 +141,20 @@
 
         Manager.NavigateTo("/");
     }
+    
+    bool IsValidEmail(string email)
+    {
+        var trimmedEmail = email.Trim();
 
+        if (trimmedEmail.EndsWith(".")) {
+            return false; // suggested by @TK-421
+        }
+        try {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == trimmedEmail;
+        }
+        catch {
+            return false;
+        }
+    }
 }

@@ -18,8 +18,8 @@
             <div style="margin: 10px">
                 @if (Connection.User is null)
                 {
-                    <button @onclick="@NavigateToAuthorization">Authorization</button>
-                    <button @onclick="@NavigateToRegistration">Register</button>
+                    <button class="button" @onclick="@NavigateToAuthorization">Authorization</button>
+                    <button class="button" @onclick="@NavigateToRegistration">Register</button>
                 }
                 else if (Connection.User!.RoleType == RoleType.Customer)
                 {

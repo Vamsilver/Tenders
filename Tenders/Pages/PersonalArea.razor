@@ -6,99 +6,129 @@
 @inject IJSRuntime JsRuntime;
 @inject NavigationManager Manager;
 
-@if (_user is not null)
-{
-    <PageTitle>@Login</PageTitle>
-
-    <button style="background-color: white; border-color: blue; float: right" @onclick="SignOut">Sign out</button>
-    <h1>Profile</h1>
-    
-    @if (!_isAdditionalInformationActive)
+<center>
+    <button class="button" style="float: right" @onclick="SignOut">Sign out</button>
+    <h1 style="margin-left: 120px">Profile</h1>
+</center>
+<div class="center-screen">
+    @if (_user is not null)
     {
-        <EditForm Model="typeof(User)">
-            @if(@Connection.User?.RoleType != RoleType.Customer)
-            {
-                <p>Name of the organization: <InputText @bind-Value="@_nickName"> </InputText> Role: @_user.RoleType.ToString()</p>
-            }
+        <PageTitle>@Login</PageTitle>
 
-            @if (_user.RoleType == RoleType.Customer)
-            {
-                <p>
-                    Fullname:
-                    <InputText @bind-Value="@_lastName"> </InputText>
-                    <InputText @bind-Value="@_firstName"> </InputText>
-                    <InputText @bind-Value="@_patronymic"> </InputText>
-                </p>
-            }
 
-            <p>
-                Login: <InputText @bind-Value="@_login"> </InputText>
-                Password: <InputText @bind-Value="@_password"> </InputText>
-            </p>
-            <p>
-                Email: <InputText @bind-Value="@_email"> </InputText>
-                Phone number: <InputText @bind-Value="@_phoneNumber"> </InputText>
-            </p>
+        @if (!_isAdditionalInformationActive)
+        {
+            <EditForm Model="typeof(User)">
+                @if (@Connection.User?.RoleType != RoleType.Customer)
+                {
+                    <label>Name of the organization: <InputText class="text-field__input" @bind-Value="@_nickName"> </InputText></label>
+                    <br/>
+                }
 
-            <button style="background-color: white; border-color: blue; margin-right: 10px"
-                    @onclick="@SaveChangesToBasicInfo">Save changes</button>
-            @if (Connection.User?.GetType() != typeof(Customer))
+                @if (_user.RoleType == RoleType.Customer)
+                {
+                    <label>
+                        Fullname:
+                        <InputText class="text-field__input" @bind-Value="@_lastName"> </InputText>
+                        <InputText class="text-field__input" @bind-Value="@_firstName"> </InputText>
+                        <InputText class="text-field__input" @bind-Value="@_patronymic"> </InputText>
+                    </label>
+                    <br/>
+                }
+
+                <label>
+                    Login: <InputText class="text-field__input" @bind-Value="@_login"> </InputText>
+                    Password: <InputText class="text-field__input" @bind-Value="@_password"> </InputText>
+                </label> <br/>
+
+                <label>
+                    Email: <InputText class="text-field__input" @bind-Value="@_email"> </InputText>
+                    Phone number: <InputText class="text-field__input" @bind-Value="@_phoneNumber"> </InputText>
+                </label> <br/>
+                <br/>
+
+                <button class="button"
+                        @onclick="@SaveChangesToBasicInfo">
+                    Save changes
+                </button>
+                @if (Connection.User?.GetType() != typeof(Customer))
+                {
+                    <button class="button" style="margin-left: 5px"
+                            @onclick="() => _isAdditionalInformationActive = true">
+                        Edit Additional Information
+                    </button>
+                }
+            </EditForm>
+        }
+        else
+        {
+            @if (Connection.User?.GetType() == typeof(Projector))
             {
-                <button style="background-color: white; border-color: blue"
-                        @onclick="() => _isAdditionalInformationActive = true"> Edit Additional Information</button>
+                <EditForm Model="typeof(User)">
+                    <label>PSRN (ОГРН): <InputText class="text-field__input" @bind-Value="@_psrn"> </InputText></label> <br/>
+
+                    <label>TIN (ИНН): <InputText class="text-field__input" @bind-Value="@_tin"> </InputText></label> <br/>
+
+                    <label>TRRC (КПП): <InputText class="text-field__input" @bind-Value="@_trrc"> </InputText></label> <br/>
+
+                    <label>Address: <InputText class="text-field__input" @bind-Value="@_address"> </InputText></label> <br/>
+
+                    <label>Director's fullname: <InputText class="text-field__input" @bind-Value="@_director"> </InputText></label> <br/>
+
+                    <label>Main engineer: <InputText class="text-field__input" @bind-Value="@_mainEngineer"> </InputText></label> <br/>
+                    <br/>
+
+                    <button class="button"
+                            @onclick="SaveChangesToAdditionalInfoForProjector">
+                        Save changes
+                    </button>
+                    <button class="button"
+                            @onclick="() => _isAdditionalInformationActive = false">
+                        Edit basic Information
+                    </button>
+                </EditForm>
             }
-        </EditForm>   
+            @if (Connection.User?.RoleType == RoleType.Builder)
+            {
+                <EditForm Model="typeof(User)">
+                    <label>PSRN (ОГРН): <InputText class="text-field__input" @bind-Value="@_psrn"> </InputText></label> <br/>
+
+                    <label>TIN (ИНН): <InputText class="text-field__input" @bind-Value="@_tin"> </InputText></label> <br/>
+
+                    <label>TRRC (КПП): <InputText class="text-field__input" @bind-Value="@_trrc"> </InputText></label> <br/>
+
+                    <label>Address: <InputText class="text-field__input" @bind-Value="@_address"> </InputText></label> <br/>
+
+                    <label>Director's fullname: <InputText class="text-field__input" @bind-Value="@_director"> </InputText></label> <br/>
+
+                    <br/>
+                    <button class="button"
+                            @onclick="SaveChangesToAdditionalInfo">
+                        Save changes
+                    </button>
+                    <button class="button"
+                            @onclick="() => _isAdditionalInformationActive = false">
+                        Edit basic Information
+                    </button>
+                </EditForm>
+            }
+        }
     }
     else
     {
-        @if (Connection.User?.GetType() == typeof(Projector))
-        {
-            <EditForm Model="typeof(User)">
-                <p>PSRN (ОГРН): <InputText @bind-Value="@_psrn" > </InputText></p>
-                <p>TIN (ИНН): <InputText @bind-Value="@_tin"> </InputText></p>
-                <p>TRRC (КПП): <InputText @bind-Value="@_trrc"> </InputText></p>
-                <p>Address: <InputText @bind-Value="@_address"> </InputText></p>
-                <p>Director's fullname: <InputText @bind-Value="@_director"> </InputText></p>
-                <p>Main engineer: <InputText @bind-Value="@_mainEngineer"> </InputText></p>
-                
-
-                <button style="background-color: white; border-color: blue" 
-                        @onclick="SaveChangesToAdditionalInfoForProjector">Save changes</button>
-                <button style="background-color: white; border-color: blue" 
-                        @onclick="() => _isAdditionalInformationActive = false"> Edit basic Information</button>
-            </EditForm>      
-        }
-        @if (Connection.User?.RoleType == RoleType.Builder)
-        {
-            <EditForm Model="typeof(User)">
-                <p>PSRN (ОГРН): <InputText @bind-Value="@_psrn" > </InputText></p>
-                <p>TIN (ИНН): <InputText @bind-Value="@_tin"> </InputText></p>
-                <p>TRRC (КПП): <InputText @bind-Value="@_trrc"> </InputText></p>
-                <p>Address: <InputText @bind-Value="@_address"> </InputText></p>
-                <p>Director's fullname: <InputText @bind-Value="@_director"> </InputText></p>
-
-                <button style="background-color: white; border-color: blue" 
-                        @onclick="SaveChangesToAdditionalInfo">Save changes</button>
-                <button style="background-color: white; border-color: blue" 
-                        @onclick="() => _isAdditionalInformationActive = false"> Edit basic Information</button>
-            </EditForm>      
-        }
+        <PageTitle>Error</PageTitle>
+        <h1>Unknown error</h1>
     }
-}
-else
-{
-    <PageTitle>Error</PageTitle>
-    <h1>Unknown error</h1>
-}
+</div>
 
 @code {
     bool _isAdditionalInformationActive;
-    
+
     [Parameter]
     public string? Login { get; set; }
-    
+
     User? _user;
-    
+
     string? _firstName;
     string? _nickName;
     string? _lastName;
@@ -114,7 +144,7 @@ else
     string? _address;
     string? _director;
     string? _mainEngineer;
-    
+
     protected override void OnInitialized()
     {
         _user = Connection.User;
@@ -125,7 +155,7 @@ else
             _email = _user.Email;
             _phoneNumber = _user.PhoneNumber;
             _nickName = _user.NickName;
-            
+
             if (_user.RoleType == RoleType.Builder)
             {
                 Builder builder = (Builder) _user;
@@ -155,17 +185,17 @@ else
             base.OnInitialized();
         }
     }
-    
+
     private async void SaveChangesToBasicInfo()
     {
         bool isParametersChanged = true;
 
         if (Connection.User?.RoleType != RoleType.Customer)
         {
-            if(!_nickName!.Equals(Connection.User?.NickName))
+            if (!_nickName!.Equals(Connection.User?.NickName))
                 Connection.ReplaceOneParameter(Connection.User!, "NickName", _nickName);
         }
-        
+
         if (!_login!.Equals(Connection.User?.Login))
         {
             if (Connection.FindByLogin(_login) is null)
@@ -178,28 +208,28 @@ else
                 await JsRuntime.InvokeVoidAsync("alert", "This login already exists!");
             }
         }
-        
-        if(!_password!.Equals(Connection.User?.Password))
+
+        if (!_password!.Equals(Connection.User?.Password))
             Connection.ReplaceOneParameter(_user, "Password", _password);
-        
-        if(!_email!.Equals(Connection.User?.Email))
+
+        if (!_email!.Equals(Connection.User?.Email))
             Connection.ReplaceOneParameter(_user, "Email", _email);
-        
-        if(!_phoneNumber!.Equals(Connection.User?.PhoneNumber))
+
+        if (!_phoneNumber!.Equals(Connection.User?.PhoneNumber))
             Connection.ReplaceOneParameter(_user, "PhoneNumber", _phoneNumber);
-        
+
         if (_user!.RoleType == RoleType.Customer)
         {
-            if(!_firstName!.Equals(((Customer)Connection.User!)?.FirstName))
+            if (!_firstName!.Equals(((Customer) Connection.User!)?.FirstName))
                 Connection.ReplaceOneParameter(_user, "FirstName", _firstName);
 
-            if(!_lastName!.Equals(((Customer)Connection.User!)?.LastName))
+            if (!_lastName!.Equals(((Customer) Connection.User!)?.LastName))
                 Connection.ReplaceOneParameter(_user, "LastName", _lastName);
-        
-            if(!_patronymic!.Equals(((Customer)Connection.User!)?.Patronymic))
+
+            if (!_patronymic!.Equals(((Customer) Connection.User!)?.Patronymic))
                 Connection.ReplaceOneParameter(_user, "Patronymic", _patronymic);
         }
-        
+
         StateHasChanged();
 
         if (isParametersChanged)
@@ -209,7 +239,7 @@ else
         else
             await JsRuntime.InvokeVoidAsync("alert", "Nothing has been changed!");
     }
-    
+
     private async void SaveChangesToAdditionalInfo()
     {
         string parametr = null;
@@ -237,9 +267,9 @@ else
 
         if (parametr is null)
         {
-            Connection.ReplaceOneParameter(Connection.User!, "TRRC", _trrc!);   
-            Connection.ReplaceOneParameter(Connection.User!, "TIN", _tin!);   
-            Connection.ReplaceOneParameter(Connection.User!, "PSRN", _psrn!);   
+            Connection.ReplaceOneParameter(Connection.User!, "TRRC", _trrc!);
+            Connection.ReplaceOneParameter(Connection.User!, "TIN", _tin!);
+            Connection.ReplaceOneParameter(Connection.User!, "PSRN", _psrn!);
             Connection.ReplaceOneParameter(Connection.User!, "Address", _address!);
             Connection.ReplaceOneParameter(Connection.User!, "Director", _director!);
             StateHasChanged();
@@ -264,4 +294,4 @@ else
         Connection.User = null;
         Manager.NavigateTo("/");
     }
-}
+    } 

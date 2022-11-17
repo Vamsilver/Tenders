@@ -8,15 +8,16 @@
 @inject ILocalStorageService StorageService;
 
 <PageTitle>Authorization</PageTitle>
+<div class="center-screen__jui">
+    <h1>Authorization</h1>
 
-<h1>Authorization</h1>
-
-<EditForm Model="typeof(User)" OnValidSubmit="TryToFindUser">
-    <p>Login:</p> <InputText @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"></InputText>
-    <p>Password:</p> <InputText type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText>
-    <br /><br />
-    <button type="submit">Sign in</button>
-</EditForm>
+    <EditForm Model="typeof(User)" OnValidSubmit="TryToFindUser">
+        <label>Login:</label> <InputText class="text-field__input" @bind-Value="@_login" @onchange="@((ChangeEventArgs e) => _login = e.Value?.ToString())"></InputText>
+        <label>Password:</label> <InputText class="text-field__input" type="password" @bind-Value="@_password" @onchange="@((ChangeEventArgs e) => _password = e.Value?.ToString())"></InputText>
+        <br/>
+        <button class="button" type="submit">Sign in</button>
+    </EditForm>
+</div>
 
 @code {
     string? _login;
@@ -34,13 +35,13 @@
 
         foundedUser = Connection.FindByLogin(_login);
 
-        if(foundedUser is null)
+        if (foundedUser is null)
         {
             await JsRuntime.InvokeVoidAsync("alert", "No such user in DB!");
             return;
         }
-        
-        if(foundedUser.Password == _password)
+
+        if (foundedUser.Password == _password)
         {
             Connection.User = foundedUser;
             Manager.NavigateTo("/");
@@ -53,4 +54,5 @@
 
         StateHasChanged();
     }
+
 }

@@ -230,6 +230,36 @@ public class MongoDbConnection
 
         return collection.Find(filter!).ToList();
     }
+
+    public Projector FindProjector(ObjectId id)
+    {
+        var client = new MongoClient("mongodb://localhost");
+        FilterDefinition<Projector> filter = Builders<Projector>.Filter.Eq("_id", id);
+        var database = client.GetDatabase("Tenders");
+        var collection = database.GetCollection<Projector>("Projectors");
+
+        return collection.Find(filter!).FirstOrDefault();
+    }
+
+    public Builder FindBuilder(ObjectId id)
+    {
+        var client = new MongoClient("mongodb://localhost");
+        FilterDefinition<Builder> filter = Builders<Builder>.Filter.Eq("_id", id);
+        var database = client.GetDatabase("Tenders");
+        var collection = database.GetCollection<Builder>("Builders");
+
+        return collection.Find(filter!).FirstOrDefault();
+    }
+    
+    public Customer FindCustomer(ObjectId id)
+    {
+        var client = new MongoClient("mongodb://localhost");
+        FilterDefinition<Customer> filter = Builders<Customer>.Filter.Eq("_id", id);
+        var database = client.GetDatabase("Tenders");
+        var collection = database.GetCollection<Customer>("Customers");
+
+        return collection.Find(filter!).FirstOrDefault();
+    }
     
     public List<Builder>? FindBuilders()
     {

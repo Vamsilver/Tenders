@@ -2,7 +2,6 @@
 @using Tenders.Core.Entities
 @using Tenders.Core.Enums
 @using Tenders.Core.Projects
-@using Microsoft.AspNetCore.Components
 @using MongoDB.Bson
 @inject MongoDbConnection Connection
 @inject NavigationManager Manager
@@ -15,8 +14,10 @@
 }
 else if (Connection.User?.RoleType == RoleType.Customer)
 {
-    <h1>Your projects</h1>
-    <button @onclick="AddProject">Add new Project</button>
+    <center>
+        <h1>Your projects</h1>
+    </center>
+    <button class="button" @onclick="AddProject">Add new Project</button>
     @if ((_waterProjectsForCustomer is not null && _waterProjectsForCustomer?.Count != 0)
          || (_gasProjectsForCustomer is not null && _gasProjectsForCustomer.Count != 0))
     {
@@ -24,7 +25,8 @@ else if (Connection.User?.RoleType == RoleType.Customer)
             <thead>
             <tr>
                 <th>Project name</th>
-                <th>Industry</th>
+                <th>Projector</th>
+                <th>Builder</th>
                 <th>Publication date</th>
                 <th>Is completed</th>
                 <th>Open link</th>
@@ -35,15 +37,29 @@ else if (Connection.User?.RoleType == RoleType.Customer)
             @foreach (var project in _waterProjectsForCustomer)
             {
                 <tr>
-                    <td width="60%">@project.Name</td>
-                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="40%">
+                        <div style="vertical-align: center">
+                            @project.Name
+                        </div>
+                    </td>
+                    <td>@Connection.FindProjector(project.ProjectorId).NickName</td>
+                    <td>@Connection.FindBuilder(project.BuilderId).NickName</td>
                     <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
-                    <td width="10%">@project.isCompleted</td>
-                    <td>
-                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    <td width="10%">
+                        @if (@project.isCompleted)
+                        {
+                            <label>Yes</label>
+                        }
+                        else
+                        {
+                            <label>No</label>
+                        }
                     </td>
                     <td>
-                        <button @onclick="@(_ => DeleteProject(@project.Id, IndustryType.WaterSupply))">Delete</button>
+                        <button class="button" @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    </td>
+                    <td>
+                        <button class="button" @onclick="@(_ => DeleteProject(@project.Id, IndustryType.WaterSupply))">Delete</button>
                     </td>
 
                 </tr>
@@ -51,16 +67,26 @@ else if (Connection.User?.RoleType == RoleType.Customer)
             @foreach (var project in _gasProjectsForCustomer)
             {
                 <tr>
-                    <td width="60%">@project.Name</td>
-                    <td width="30%">@project.IndustryType.ToString()</td>
+                    <td width="40%">@project.Name</td>
+                    <td>@Connection.FindProjector(project.ProjectorId).NickName</td>
+                    <td>@Connection.FindBuilder(project.BuilderId).NickName</td>
                     <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
-                    <td width="10%">@project.isCompleted</td>
+                    <td width="10%">
+                        @if (@project.isCompleted)
+                        {
+                            <label>Yes</label>
+                        }
+                        else
+                        {
+                            <label>No</label>
+                        }
+                    </td>
                     <td>
-                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                        <button class="button" @onclick="@(_ => OpenProject(@project.Id))">Open</button>
 
                     </td>
                     <td>
-                        <button @onclick="@(_ => DeleteProject(@project.Id, IndustryType.GasFixation))">Delete</button>
+                        <button class="button" @onclick="@(_ => DeleteProject(@project.Id, IndustryType.GasFixation))">Delete</button>
                     </td>
                 </tr>
             }
@@ -72,14 +98,15 @@ else if (Connection.User?.RoleType == RoleType.Customer)
         <SurveyPromptProjects Title="You don't have any projects yet!"></SurveyPromptProjects>
     }
 }
-else 
+else
 {
     <h1>Your projects</h1>
-    
+
     <table class="table">
         <thead>
         <tr>
             <th>Project name</th>
+            <th>Customer</th>
             <th>Industry</th>
             <th>Publication date</th>
             <th>Is completed</th>
@@ -92,14 +119,28 @@ else
             if (project.BuilderId == Connection.User.Id || project.ProjectorId == Connection.User.Id)
             {
                 <tr>
-                    <td width="60%">@project.Name</td>
+                    <td width="40%">@project.Name</td>
+                    <td>
+                        <label>
+                            @Connection.FindCustomer(@project.OwnerId).LastName @Connection.FindCustomer(@project.OwnerId).FirstName
+                        </label>
+                    </td>
                     <td width="30%">@project.IndustryType.ToString()</td>
                     <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
-                    <td width="10%">@project.isCompleted</td>
-                    <td>
-                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    <td width="10%">
+                        @if (@project.isCompleted)
+                        {
+                            <label>Yes</label>
+                        }
+                        else
+                        {
+                            <label>No</label>
+                        }
                     </td>
-                </tr>   
+                    <td>
+                        <button class="button" @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                    </td>
+                </tr>
             }
         }
         @foreach (var project in _allGasProjects!)
@@ -107,12 +148,26 @@ else
             if (project.BuilderId == Connection.User.Id || project.ProjectorId == Connection.User.Id)
             {
                 <tr>
-                    <td width="60%">@project.Name</td>
+                    <td width="40%">@project.Name</td>
+                    <td>
+                        <label>
+                            @Connection.FindCustomer(@project.OwnerId).LastName @Connection.FindCustomer(@project.OwnerId).FirstName
+                        </label>
+                    </td>
                     <td width="30%">@project.IndustryType.ToString()</td>
                     <td width="10%">@project.date.Day/@project.date.Month/@project.date.Year</td>
-                    <td width="10%">@project.isCompleted</td>
+                    <td width="10%">
+                        @if (@project.isCompleted)
+                        {
+                            <label>Yes</label>
+                        }
+                        else
+                        {
+                            <label>No</label>
+                        }
+                    </td>
                     <td>
-                        <button @onclick="@(_ => OpenProject(@project.Id))">Open</button>
+                        <button class="button" @onclick="@(_ => OpenProject(@project.Id))">Open</button>
                     </td>
                 </tr>
             }
